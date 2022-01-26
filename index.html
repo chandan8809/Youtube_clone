@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./youtube.css">
+</head>
+<body>
+    <div class="searchbar">
+        <input type="text" id="data" placeholder="Search">
+        <button onclick="getdata()">Search</button>
+    </div>
+    <hr>
+    <div id="result_div">
+        <!-- <iframe 
+        width="560" 
+        height="315" 
+        src="https://www.youtube.com/embed/nzn3FwMRhUQ" 
+        title="YouTube video player" 
+        frameborder="0" 
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen
+        ></iframe> -->
+    </div>
+    
+</body>
+</html>
+<script>
+    
+    const apikey="AIzaSyBVPWJMMem8SEz825r5dADnzqVu9BGO4Hg"
+    async function getdata(api){
+       try{
+        var name=document.querySelector("#data").value
+       
+        let api= `https://youtube.googleapis.com/youtube/v3/search?part=%20snippet&q=${name}&type=video&key=${apikey}&maxResults=10`
+
+        res=await fetch(api)
+        data=await res.json()
+        items=data.items
+        localStorage.setItem("recomanded",JSON.stringify(items))
+        
+        
+        display(items)
+
+       }
+       catch(err){
+           console.log("err:",err)
+       }
+    }
+    var static=JSON.parse(localStorage.getItem("recomanded"))||[]
+   
+
+    var display=(items)=>{           //ES6 function arrow function
+        document.querySelector("#result_div").textContent=""
+        items.map(({snippet,id:{videoId}})=>{                                       // neated array destructuring 
+                                                                   
+                                                    
+        //    let iframe=document.createElement("iframe")
+        //    iframe.src=`https://www.youtube.com/embed/${videoId}`
+        //    iframe.height="315"
+        //    iframe.width="560"
+        //    iframe.setAttribute("allowfullscreen",true)
+           
+           imgdiv=document.createElement("div")
+           titlediv=document.createElement("div")
+           maindiv=document.createElement("div")
+        
+           var image=document.createElement("img")
+           image.src=snippet.thumbnails.medium.url
+           var Title=document.createElement("p")
+           Title.id="titleof"
+           Title.textContent=snippet.title;
+           var chenTitle=document.createElement("p")
+           chenTitle.textContent=snippet.channelTitle;
+           chenTitle.style.color="gray"
+           chenTitle.style.fontSize="12px"
+           chenTitle.id="chen"
+           imgdiv.append(image)
+           titlediv.append(Title,chenTitle)
+           maindiv.append(imgdiv,titlediv)
+
+           document.querySelector("#result_div").append(maindiv)
+
+           var dataTo_send={
+              snippet,
+              videoId
+           }
+           
+           maindiv.onclick=()=>{
+               localStorage.setItem("clicked_video",JSON.stringify(dataTo_send))
+               window.location.href="video.html"
+               
+           }
+        })
+    }
+    display(static)
+    
+</script>
