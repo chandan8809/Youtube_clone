@@ -33,7 +33,7 @@
        try{
         var name=document.querySelector("#data").value
        
-        let api= `https://youtube.googleapis.com/youtube/v3/search?part=%20snippet&q=${name}&type=video&key=${apikey}&maxResults=10`
+        let api= `https://youtube.googleapis.com/youtube/v3/search?part=%20snippet&q=${name}&type=video&key=${apikey}&maxResults=20`
 
         res=await fetch(api)
         data=await res.json()
